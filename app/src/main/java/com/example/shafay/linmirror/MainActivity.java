@@ -4,12 +4,11 @@ import android.app.AlertDialog;
 import android.content.BroadcastReceiver;
 import android.content.ComponentName;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
-import android.os.Bundle;
 import android.text.TextUtils;
 import android.widget.ImageView;
 
@@ -29,7 +28,7 @@ public class MainActivity extends AppCompatActivity {
 
         // Here we get a reference to the image we will modify when a notification is received
         interceptedNotificationImageView
-                = (ImageView) this.findViewById(R.id.intercepted_notification_logo);
+                = this.findViewById(R.id.intercepted_notification_logo);
 
         // If the user did not turn the notification listener service on we prompt him to do so
         if(!isNotificationServiceEnabled()){
@@ -84,8 +83,8 @@ public class MainActivity extends AppCompatActivity {
                 ENABLED_NOTIFICATION_LISTENERS);
         if (!TextUtils.isEmpty(flat)) {
             final String[] names = flat.split(":");
-            for (int i = 0; i < names.length; i++) {
-                final ComponentName cn = ComponentName.unflattenFromString(names[i]);
+            for (String name : names) {
+                final ComponentName cn = ComponentName.unflattenFromString(name);
                 if (cn != null) {
                     if (TextUtils.equals(pkgName, cn.getPackageName())) {
                         return true;
@@ -122,17 +121,11 @@ public class MainActivity extends AppCompatActivity {
         alertDialogBuilder.setTitle(R.string.notification_listener_service);
         alertDialogBuilder.setMessage(R.string.notification_listener_service_explanation);
         alertDialogBuilder.setPositiveButton(R.string.yes,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS));
-                    }
-                });
+                (dialog, id) -> startActivity(new Intent(ACTION_NOTIFICATION_LISTENER_SETTINGS)));
         alertDialogBuilder.setNegativeButton(R.string.no,
-                new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int id) {
-                        // If you choose to not enable the notification listener
-                        // the app. will not work as expected
-                    }
+                (dialog, id) -> {
+                    // If you choose to not enable the notification listener
+                    // the app. will not work as expected
                 });
         return(alertDialogBuilder.create());
     }
