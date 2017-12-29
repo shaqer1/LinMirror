@@ -3,12 +3,16 @@ package com.example.shafay.linmirror;
 
 import android.app.Notification;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.PrintWriter;
+import java.net.Socket;
 import java.util.Objects;
 
 public class NotificationListener extends NotificationListenerService {
@@ -51,13 +55,23 @@ public class NotificationListener extends NotificationListenerService {
 
         }*/
     //TODO:call socket here
-        String packageName = sbn.getPackageName();//com.(package)
+        String packageName = sbn.getPackageName().substring(sbn.getPackageName().indexOf(".")+1);//com.(package)
         Notification notif = sbn.getNotification();
         String category = notif.category;
         Icon bmp = notif.getLargeIcon();
         Notification.Action[] act = notif.actions;
         String message = Objects.requireNonNull(notif.extras.getCharSequence("android.text")).toString();
-
+        try {
+            Socket socket = new Socket("192.168.0.9", 2001);
+            BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+            PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
+            pw .println(String.format("%s %s %s\n",packageName, category, message));
+            br.close();
+            pw.close();
+        } catch (IOException e) {
+            Utils.showToast(getApplicationContext(), e.getMessage());
+            e.printStackTrace();
+        }
     }
 
     @Override
