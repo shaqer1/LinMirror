@@ -1,10 +1,15 @@
 package com.example.shafay.linmirror;
 
 
+import android.app.Notification;
 import android.content.Intent;
+import android.graphics.Bitmap;
+import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+
+import java.util.Objects;
 
 public class NotificationListener extends NotificationListenerService {
 
@@ -38,12 +43,21 @@ public class NotificationListener extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn){
         int notificationCode = matchNotificationCode(sbn);
-
+/*
         if(notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE){
             Intent intent = new  Intent("com.github.chagall.notificationlistenerexample");
             intent.putExtra("Notification Code", notificationCode);
             sendBroadcast(intent);
-        }
+
+        }*/
+    //TODO:call socket here
+        String packageName = sbn.getPackageName();//com.(package)
+        Notification notif = sbn.getNotification();
+        String category = notif.category;
+        Icon bmp = notif.getLargeIcon();
+        Notification.Action[] act = notif.actions;
+        String message = Objects.requireNonNull(notif.extras.getCharSequence("android.text")).toString();
+
     }
 
     @Override
