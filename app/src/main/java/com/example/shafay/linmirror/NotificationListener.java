@@ -54,7 +54,6 @@ public class NotificationListener extends NotificationListenerService {
             sendBroadcast(intent);
 
         }*/
-    //TODO:call socket here
         String packageName = sbn.getPackageName().substring(sbn.getPackageName().indexOf(".")+1);//com.(package)
         Notification notif = sbn.getNotification();
         String category = notif.category;
@@ -65,7 +64,8 @@ public class NotificationListener extends NotificationListenerService {
             Socket socket = new Socket("192.168.0.9", 2001);
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-            pw .println(String.format("%s %s %s\n",packageName, category, message));
+            pw .println(String.format("%s-%s-%s\n",packageName.replaceAll("-"," "),
+                    category.replaceAll("-"," "), message.replaceAll("-"," ")));
             br.close();
             pw.close();
         } catch (IOException e) {
