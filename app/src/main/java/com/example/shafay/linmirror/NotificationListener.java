@@ -54,18 +54,20 @@ public class NotificationListener extends NotificationListenerService {
             sendBroadcast(intent);
 
         }*/
-        String packageName = sbn.getPackageName().substring(sbn.getPackageName().indexOf(".")+1);//com.(package)
         Notification notif = sbn.getNotification();
-        String category = notif.category;
+        String title = notif.extras.getString("android.title");
+        String text = Objects.requireNonNull(notif.extras.getCharSequence("android.text")).toString();
+        String packageName = sbn.getPackageName().substring(sbn.getPackageName().lastIndexOf(".")+1);
+        String tickerText = (notif.tickerText != null)?notif.tickerText.toString():"";
         Icon bmp = notif.getLargeIcon();
         Notification.Action[] act = notif.actions;
-        String message = Objects.requireNonNull(notif.extras.getCharSequence("android.text")).toString();
         try {
             Socket socket = new Socket("192.168.0.9", 2001);
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-            pw .println(String.format("%s-%s-%s\n",packageName.replaceAll("-"," "),
-                    category.replaceAll("-"," "), message.replaceAll("-"," ")));
+            pw .println(String.format("%s-%s-%s-%s\n",packageName.replaceAll("-"," "),
+                    Objects.requireNonNull(title).replaceAll("-"," "), tickerText.replaceAll("-"," ")
+                    ,text.replaceAll("-"," ")));
             br.close();
             pw.close();
         } catch (IOException e) {
