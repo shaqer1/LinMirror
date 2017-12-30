@@ -12,6 +12,12 @@
 <string name="notification_listener_service_explanation">"For the the app. to work you need to enable the Notification Listener Service. Enable it now?"</string>
 <string name="yes">Yes</string>
 <string name="no">No</string>
+    <string name="HINT_EDITTEXT">192.169.0.1</string>
+    <string name="HINT_IP">port</string>
+    <string name="PORT_TEXT">Port Number</string>
+    <string name="save_button">Save</string>
+    <string name="input_ip_address">Input Ip Address</string>
+    <string name="port_number">Port Number</string>
 
 </resources>
 

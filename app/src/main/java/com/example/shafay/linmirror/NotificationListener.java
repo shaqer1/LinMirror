@@ -62,7 +62,7 @@ public class NotificationListener extends NotificationListenerService {
         Icon bmp = notif.getLargeIcon();
         Notification.Action[] act = notif.actions;
         try {
-            Socket socket = new Socket("192.168.0.9", 2001);
+            Socket socket = new Socket("192.168.0.11", 2001);
             BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
             PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
             pw .println(String.format("%s-%s-%s-%s\n",packageName.replaceAll("-"," "),

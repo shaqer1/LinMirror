@@ -6,10 +6,13 @@ import android.content.ComponentName;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageView;
 
 public class MainActivity extends AppCompatActivity {
@@ -17,43 +20,51 @@ public class MainActivity extends AppCompatActivity {
     private static final String ENABLED_NOTIFICATION_LISTENERS = "enabled_notification_listeners";
     private static final String ACTION_NOTIFICATION_LISTENER_SETTINGS = "android.settings.ACTION_NOTIFICATION_LISTENER_SETTINGS";
 
-    private ImageView interceptedNotificationImageView;
-    private ImageChangeBroadcastReceiver imageChangeBroadcastReceiver;
+    //private ImageChangeBroadcastReceiver imageChangeBroadcastReceiver;
     private AlertDialog enableNotificationListenerAlertDialog;
+    private Button saveButton;
+    private EditText portText;
+    private EditText ipText;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // Here we get a reference to the image we will modify when a notification is received
-        interceptedNotificationImageView
-                = this.findViewById(R.id.intercepted_notification_logo);
-
         // If the user did not turn the notification listener service on we prompt him to do so
         if(!isNotificationServiceEnabled()){
             enableNotificationListenerAlertDialog = buildNotificationServiceAlertDialog();
             enableNotificationListenerAlertDialog.show();
         }
+        saveButton = findViewById(R.id.button);
+        saveButton.setOnClickListener((view) -> {
+            SharedPreferences prefs = this.getSharedPreferences(//TODO: create class
+                    Constants.app, Context.MODE_PRIVATE);
+            prefs.edit().putBoolean(Constants.SETTINGS_SAVED, true).apply();
+            prefs.edit().putString(Constants.PORT_KEY, portText.getText().toString()).apply();
+            prefs.edit().putString(Constants.IP_KEY, ipText.getText().toString()).apply();
+        });
+        ipText = findViewById(R.id.ipEditText);
+        portText = findViewById(R.id.portText);
 
-        // Finally we register a receiver to tell the MainActivity when a notification has been received
+/*        // Finally we register a receiver to tell the MainActivity when a notification has been received
         imageChangeBroadcastReceiver = new ImageChangeBroadcastReceiver();
         IntentFilter intentFilter = new IntentFilter();
         intentFilter.addAction("com.github.chagall.notificationlistenerexample");
-        registerReceiver(imageChangeBroadcastReceiver,intentFilter);
+        registerReceiver(imageChangeBroadcastReceiver,intentFilter);*/
     }
 
     @Override
     protected void onDestroy() {
-        super.onDestroy();
-        unregisterReceiver(imageChangeBroadcastReceiver);
+        super.onDestroy();/*
+        unregisterReceiver(imageChangeBroadcastReceiver);*/
     }
 
-    /**
+   /* *//**
      * Change Intercepted Notification Image
      * Changes the MainActivity image based on which notification was intercepted
      * @param notificationCode The intercepted notification code
-     */
+     *//*
     private void changeInterceptedNotificationImage(int notificationCode){
         switch(notificationCode){
             case NotificationListener.InterceptedNotificationCode.FACEBOOK_CODE:
@@ -70,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
     }
-
+*/
     /**
      * Is Notification Service Enabled.
      * Verifies if the notification listener service is enabled.
@@ -100,14 +111,14 @@ public class MainActivity extends AppCompatActivity {
      * We use this Broadcast Receiver to notify the Main Activity when
      * a new notification has arrived, so it can properly change the
      * notification image
-     * */
+     * *//*
     public class ImageChangeBroadcastReceiver extends BroadcastReceiver {
         @Override
         public void onReceive(Context context, Intent intent) {
             int receivedNotificationCode = intent.getIntExtra("Notification Code",-1);
             changeInterceptedNotificationImage(receivedNotificationCode);
         }
-    }
+    }*/
 
 
     /**
