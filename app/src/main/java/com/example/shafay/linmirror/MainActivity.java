@@ -37,15 +37,29 @@ public class MainActivity extends AppCompatActivity {
             enableNotificationListenerAlertDialog.show();
         }
         saveButton = findViewById(R.id.button);
-        saveButton.setOnClickListener((view) -> {
-            SharedPreferences prefs = this.getSharedPreferences(//TODO: create class
-                    Constants.app, Context.MODE_PRIVATE);
-            prefs.edit().putBoolean(Constants.SETTINGS_SAVED, true).apply();
-            prefs.edit().putString(Constants.PORT_KEY, portText.getText().toString()).apply();
-            prefs.edit().putString(Constants.IP_KEY, ipText.getText().toString()).apply();
+        saveButton.setOnClickListener((view) -> {//TODO test fairy
+            boolean settingsSaved = true;
+            if(Utils.isNotNullOrEmpty(portText.getText().toString()) && Utils.isPortFormat(portText.getText().toString())){
+                new PreferenceHandler(this).setPort(portText.getText().toString());
+            }else {
+                portText.setError("Port has incorrect format or is empty");
+                settingsSaved = false;
+            }
+            if(Utils.isNotNullOrEmpty(ipText.getText().toString()) && Utils.isIPFormat(ipText.getText().toString()))
+                new PreferenceHandler(this).setIP(ipText.getText().toString());
+            else {
+                ipText.setError("IP has incorrect format or is empty");
+                settingsSaved = false;
+            }
+            if(settingsSaved)
+                new PreferenceHandler(this).putSettingSaved(true);
         });
         ipText = findViewById(R.id.ipEditText);
         portText = findViewById(R.id.portText);
+        if(new PreferenceHandler(this).isSettingsSaved()){
+            ipText.setText(new PreferenceHandler(this).getIP());
+            portText.setText(new PreferenceHandler(this).getPort());
+        }
 
 /*        // Finally we register a receiver to tell the MainActivity when a notification has been received
         imageChangeBroadcastReceiver = new ImageChangeBroadcastReceiver();
@@ -54,13 +68,14 @@ public class MainActivity extends AppCompatActivity {
         registerReceiver(imageChangeBroadcastReceiver,intentFilter);*/
     }
 
+
     @Override
     protected void onDestroy() {
         super.onDestroy();/*
         unregisterReceiver(imageChangeBroadcastReceiver);*/
     }
 
-   /* *//**
+   /**
      * Change Intercepted Notification Image
      * Changes the MainActivity image based on which notification was intercepted
      * @param notificationCode The intercepted notification code
