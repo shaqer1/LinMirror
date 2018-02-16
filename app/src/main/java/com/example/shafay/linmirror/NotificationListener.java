@@ -63,16 +63,16 @@ public class NotificationListener extends NotificationListenerService {
             Icon bmp = notif.getLargeIcon();
             Notification.Action[] act = notif.actions;
             try {
-                Socket socket = new Socket("192.168.0.11", 2001);//TODO:from preferences
+                Socket socket = new Socket(new PreferenceHandler(this).getIP(), Integer.parseInt(new PreferenceHandler(this).getPort()));
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-                pw .println(String.format("%s-%s-%s-%s\n",packageName.replaceAll("-"," "),
+                pw .println(String.format("%s-%s-%s-%s",packageName.replaceAll("-"," "),
                         Objects.requireNonNull(title).replaceAll("-"," "), tickerText.replaceAll("-"," ")
                         ,text.replaceAll("-"," ")));
                 br.close();
                 pw.close();
-            } catch (IOException e) {
-                Utils.showToast(getApplicationContext(), e.getMessage());
+            } catch (IOException e) {//TODO: exception testing in app
+                //Utils.showToast(this.getBaseContext(), e.getMessage());
                 e.printStackTrace();
             }
         }

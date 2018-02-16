@@ -18,6 +18,7 @@
     <string name="save_button">Save</string>
     <string name="input_ip_address">Input Ip Address</string>
     <string name="port_number">Port Number</string>
+    <string name="HINT_PORT">2001</string>
 
 </resources>
 

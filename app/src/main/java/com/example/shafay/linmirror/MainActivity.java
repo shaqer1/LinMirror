@@ -45,14 +45,16 @@ public class MainActivity extends AppCompatActivity {
                 portText.setError("Port has incorrect format or is empty");
                 settingsSaved = false;
             }
-            if(Utils.isNotNullOrEmpty(ipText.getText().toString()) && Utils.isIPFormat(ipText.getText().toString()))
+            if(settingsSaved && Utils.isNotNullOrEmpty(ipText.getText().toString()) /*&& Utils.isIPFormat(ipText.getText().toString())*/)
                 new PreferenceHandler(this).setIP(ipText.getText().toString());
             else {
                 ipText.setError("IP has incorrect format or is empty");
                 settingsSaved = false;
             }
-            if(settingsSaved)
+            if(settingsSaved){
                 new PreferenceHandler(this).putSettingSaved(true);
+                Utils.showToast(MainActivity.this, "Settings saved");
+            }
         });
         ipText = findViewById(R.id.ipEditText);
         portText = findViewById(R.id.portText);
