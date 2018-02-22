@@ -62,8 +62,12 @@ public class NotificationListener extends NotificationListenerService {
             String tickerText = (notif.tickerText != null)?notif.tickerText.toString():"";
             Icon bmp = notif.getLargeIcon();
             Notification.Action[] act = notif.actions;
+            if(Objects.requireNonNull(title).contains("Select Keyboard")){
+                return;
+            }
             try {
                 Socket socket = new Socket(new PreferenceHandler(this).getIP(), Integer.parseInt(new PreferenceHandler(this).getPort()));
+                socket.setSoTimeout(10000);
                 BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
                 PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
                 pw .println(String.format("%s-%s-%s-%s",packageName.replaceAll("-"," "),
