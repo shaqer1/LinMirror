@@ -9,7 +9,7 @@
 
 <!-- Strings related to the Alert Dialog -->
 <string name="notification_listener_service">"LinMirror Service"</string>
-<string name="notification_listener_service_explanation">"For the the app. to work you need to enable the Notification Listener Service. Enable it now?"</string>
+<string name="notification_listener_service_explanation">"For the app. to work you need to enable the Notification Listener Service. Enable it now?"</string>
 <string name="yes">Yes</string>
 <string name="no">No</string>
     <string name="HINT_EDITTEXT">192.169.0.1</string>

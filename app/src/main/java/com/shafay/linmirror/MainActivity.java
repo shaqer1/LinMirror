@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
             enableNotificationListenerAlertDialog.show();
         }
         saveButton = findViewById(R.id.button);
-        saveButton.setOnClickListener((view) -> {//TODO test fairy
+        saveButton.setOnClickListener((view) -> {
             boolean settingsSaved = true;
             if(Utils.isNotNullOrEmpty(portText.getText().toString()) && Utils.isPortFormat(portText.getText().toString())){
                 new PreferenceHandler(this).setPort(portText.getText().toString());
