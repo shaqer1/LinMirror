@@ -1,4 +1,4 @@
-package com.example.shafay.linmirror;
+package com.shafay.linmirror;
 
 import org.junit.Test;
 

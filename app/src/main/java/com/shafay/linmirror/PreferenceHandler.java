@@ -1,4 +1,4 @@
-package com.example.shafay.linmirror;
+package com.shafay.linmirror;
 
 import android.content.Context;
 import android.content.SharedPreferences;

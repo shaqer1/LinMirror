@@ -1,5 +1,5 @@
-package com.example.shafay.linmirror;
 
+package com.shafay.linmirror;
 
 import android.app.Notification;
 import android.content.Intent;
@@ -7,20 +7,20 @@ import android.graphics.drawable.Icon;
 import android.os.IBinder;
 import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
+import android.util.Log;
 
-import java.io.BufferedReader;
-import java.io.IOException;
-import java.io.InputStreamReader;
-import java.io.PrintWriter;
-import java.net.Socket;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.FieldValue;
+import com.google.firebase.firestore.FirebaseFirestore;
+
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Objects;
+
+import static android.content.ContentValues.TAG;
 
 public class NotificationListener extends NotificationListenerService {
 
-    /*
-        These are the package names of the apps. for which we want to
-        listen the notifications
-     */
     private static final class ApplicationPackageNames {
         static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
         static final String FACEBOOK_MESSENGER_PACK_NAME = "com.facebook.orca";
@@ -28,11 +28,8 @@ public class NotificationListener extends NotificationListenerService {
         static final String INSTAGRAM_PACK_NAME = "com.instagram.android";
     }
 
-    /*
-        These are the return codes we use in the method which intercepts
-        the notifications, to decide whether we should do something or not
-     */
-    static final class InterceptedNotificationCode {
+
+    public static final class InterceptedNotificationCode {
         static final int FACEBOOK_CODE = 1;
         static final int WHATSAPP_CODE = 2;
         static final int INSTAGRAM_CODE = 3;
@@ -47,13 +44,13 @@ public class NotificationListener extends NotificationListenerService {
     @Override
     public void onNotificationPosted(StatusBarNotification sbn){
         int notificationCode = matchNotificationCode(sbn);
-/*
-        if(notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE){
+
+        /*if(notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE){
             Intent intent = new  Intent("com.github.chagall.notificationlistenerexample");
             intent.putExtra("Notification Code", notificationCode);
             sendBroadcast(intent);
-
         }*/
+
         if(new PreferenceHandler(this).isSettingsSaved()){
             Notification notif = sbn.getNotification();
             String title = notif.extras.getString("android.title");
@@ -62,23 +59,27 @@ public class NotificationListener extends NotificationListenerService {
             String tickerText = (notif.tickerText != null)?notif.tickerText.toString():"";
             Icon bmp = notif.getLargeIcon();
             Notification.Action[] act = notif.actions;
-            if(Objects.requireNonNull(title).contains("Select Keyboard")){
+            if(Objects.requireNonNull(title).contains("Select keyboard")){
                 return;
             }
-            try {
-                Socket socket = new Socket(new PreferenceHandler(this).getIP(), Integer.parseInt(new PreferenceHandler(this).getPort()));
-                socket.setSoTimeout(10000);
-                BufferedReader br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-                PrintWriter pw = new PrintWriter(socket.getOutputStream(), true);
-                pw .println(String.format("%s-%s-%s-%s",packageName.replaceAll("-"," "),
-                        Objects.requireNonNull(title).replaceAll("-"," "), tickerText.replaceAll("-"," ")
-                        ,text.replaceAll("-"," ")));
-                br.close();
-                pw.close();
-            } catch (IOException e) {//TODO: exception testing in app
-                //Utils.showToast(this.getBaseContext(), e.getMessage());
-                e.printStackTrace();
-            }
+            //firebase
+            Map<String, Object> notification = new HashMap<>();
+            notification.put("packageName", "\"" + packageName.replaceAll("-"," ") + "\"");
+            notification.put("title","\"" +  Objects.requireNonNull(title).replaceAll("-"," ")+ "\"");
+            notification.put("tickerText", "\"" + tickerText.replaceAll("-"," ")+ "\"");
+            notification.put("text", "\"" + text.replaceAll("-"," ")+ "\"");
+            FirebaseFirestore db = FirebaseFirestore.getInstance();
+            DocumentReference docref = db.collection("notifications")
+                    .document(System.currentTimeMillis() + packageName.replaceAll("-"," "));
+            docref.set(notification)
+                    .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
+                    .addOnFailureListener(e -> Log.w(TAG, "Error writing document", e));
+
+            Map<String,Object> updates = new HashMap<>();
+            updates.put("timestamp", FieldValue.serverTimestamp());
+
+            docref.update(updates).addOnCompleteListener(task -> Log.d(TAG, "DocumentSnapshot successfully written!"));
+            //firebase ---- end ----
         }
     }
 
@@ -106,16 +107,18 @@ public class NotificationListener extends NotificationListenerService {
     private int matchNotificationCode(StatusBarNotification sbn) {
         String packageName = sbn.getPackageName();
 
-        switch (packageName) {
-            case ApplicationPackageNames.FACEBOOK_PACK_NAME:
-            case ApplicationPackageNames.FACEBOOK_MESSENGER_PACK_NAME:
-                return (InterceptedNotificationCode.FACEBOOK_CODE);
-            case ApplicationPackageNames.INSTAGRAM_PACK_NAME:
-                return (InterceptedNotificationCode.INSTAGRAM_CODE);
-            case ApplicationPackageNames.WHATSAPP_PACK_NAME:
-                return (InterceptedNotificationCode.WHATSAPP_CODE);
-            default:
-                return (InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE);
+        if(packageName.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME)
+                || packageName.equals(ApplicationPackageNames.FACEBOOK_MESSENGER_PACK_NAME)){
+            return(InterceptedNotificationCode.FACEBOOK_CODE);
+        }
+        else if(packageName.equals(ApplicationPackageNames.INSTAGRAM_PACK_NAME)){
+            return(InterceptedNotificationCode.INSTAGRAM_CODE);
+        }
+        else if(packageName.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)){
+            return(InterceptedNotificationCode.WHATSAPP_CODE);
+        }
+        else{
+            return(InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE);
         }
     }
 }

@@ -1,4 +1,4 @@
-package com.example.shafay.linmirror;
+package com.shafay.linmirror;
 
 import android.content.Context;
 import android.support.test.InstrumentationRegistry;
@@ -21,6 +21,6 @@ public class ExampleInstrumentedTest {
         // Context of the app under test.
         Context appContext = InstrumentationRegistry.getTargetContext();
 
-        assertEquals("com.example.shafay.linmirror", appContext.getPackageName());
+        assertEquals("com.shafay.linmirror", appContext.getPackageName());
     }
 }

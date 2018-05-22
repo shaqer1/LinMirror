@@ -1,4 +1,4 @@
-package com.example.shafay.linmirror;
+package com.shafay.linmirror;
 
 public class Constants {
     public static final String app = "LinMirror";
