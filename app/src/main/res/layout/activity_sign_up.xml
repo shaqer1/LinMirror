@@ -42,13 +42,28 @@
             app:layout_constraintStart_toStartOf="@+id/emailEditText"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <TextView
+            android:id="@+id/textView3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="16dp"
+            android:layout_marginStart="16dp"
+            android:layout_marginTop="16dp"
+            android:text="@string/pass_prompt"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            android:textSize="18sp"
+            app:layout_constraintEnd_toEndOf="@+id/emailEditText"
+            app:layout_constraintStart_toStartOf="@+id/emailEditText"
+            app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+
         <EditText
             android:id="@+id/passText"
             android:layout_width="wrap_content"
             android:layout_height="46dp"
             android:layout_marginEnd="16dp"
             android:layout_marginStart="16dp"
-            android:layout_marginTop="8dp"
+            android:layout_marginTop="16dp"
             android:background="@drawable/edittext_bg"
             android:ems="10"
             android:hint="@string/pass_prompt_hint"
@@ -57,19 +72,8 @@
             android:textSize="18sp"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/emailEditText" />
+            app:layout_constraintTop_toBottomOf="@+id/textView3" />
 
-        <Button
-            android:id="@+id/loginButton"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_marginEnd="8dp"
-            android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
-            android:text="@string/login_button"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/passText" />
 
         <Button
             android:id="@+id/signupButton"
@@ -77,11 +81,11 @@
             android:layout_height="wrap_content"
             android:layout_marginEnd="8dp"
             android:layout_marginStart="8dp"
-            android:layout_marginTop="16dp"
+            android:layout_marginTop="8dp"
             android:text="@string/signup_button_prompt"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@+id/loginButton" />
+            app:layout_constraintTop_toBottomOf="@+id/passText" />
 
     </android.support.constraint.ConstraintLayout>
 </LinearLayout>

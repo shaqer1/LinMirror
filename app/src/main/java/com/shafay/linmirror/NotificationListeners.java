@@ -9,6 +9,8 @@ import android.service.notification.NotificationListenerService;
 import android.service.notification.StatusBarNotification;
 import android.util.Log;
 
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
@@ -19,7 +21,8 @@ import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
-public class NotificationListener extends NotificationListenerService {
+public class NotificationListeners extends NotificationListenerService {
+    public static FirebaseAuth mAuth;
 
     private static final class ApplicationPackageNames {
         static final String FACEBOOK_PACK_NAME = "com.facebook.katana";
@@ -38,12 +41,14 @@ public class NotificationListener extends NotificationListenerService {
 
     @Override
     public IBinder onBind(Intent intent) {
+        mAuth = FirebaseAuth.getInstance();
         return super.onBind(intent);
     }
 
     @Override
     public void onNotificationPosted(StatusBarNotification sbn){
         int notificationCode = matchNotificationCode(sbn);
+        FirebaseUser currentUser = mAuth.getCurrentUser();
 
         /*if(notificationCode != InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE){
             Intent intent = new  Intent("com.github.chagall.notificationlistenerexample");
@@ -51,7 +56,7 @@ public class NotificationListener extends NotificationListenerService {
             sendBroadcast(intent);
         }*/
 
-        if(new PreferenceHandler(this).isSettingsSaved()){
+        if(currentUser != null){
             Notification notif = sbn.getNotification();
             String title = notif.extras.getString("android.title");
             String text = Objects.requireNonNull(notif.extras.getCharSequence("android.text")).toString();
@@ -64,12 +69,12 @@ public class NotificationListener extends NotificationListenerService {
             }
             //firebase
             Map<String, Object> notification = new HashMap<>();
-            notification.put("packageName", "\"" + packageName.replaceAll("-"," ") + "\"");
-            notification.put("title","\"" +  Objects.requireNonNull(title).replaceAll("-"," ")+ "\"");
-            notification.put("tickerText", "\"" + tickerText.replaceAll("-"," ")+ "\"");
-            notification.put("text", "\"" + text.replaceAll("-"," ")+ "\"");
+            notification.put("packageName", packageName.replaceAll("-"," "));
+            notification.put("title", Objects.requireNonNull(title).replaceAll("-"," "));
+            notification.put("tickerText", tickerText.replaceAll("-"," "));
+            notification.put("text", text.replaceAll("-"," "));
             FirebaseFirestore db = FirebaseFirestore.getInstance();
-            DocumentReference docref = db.collection("notifications")
+            DocumentReference docref = db.collection(currentUser.getUid()).document("userNotifications").collection("notifications")
                     .document(System.currentTimeMillis() + packageName.replaceAll("-"," "));
             docref.set(notification)
                     .addOnSuccessListener(aVoid -> Log.d(TAG, "DocumentSnapshot successfully written!"))
@@ -107,18 +112,16 @@ public class NotificationListener extends NotificationListenerService {
     private int matchNotificationCode(StatusBarNotification sbn) {
         String packageName = sbn.getPackageName();
 
-        if(packageName.equals(ApplicationPackageNames.FACEBOOK_PACK_NAME)
-                || packageName.equals(ApplicationPackageNames.FACEBOOK_MESSENGER_PACK_NAME)){
-            return(InterceptedNotificationCode.FACEBOOK_CODE);
-        }
-        else if(packageName.equals(ApplicationPackageNames.INSTAGRAM_PACK_NAME)){
-            return(InterceptedNotificationCode.INSTAGRAM_CODE);
-        }
-        else if(packageName.equals(ApplicationPackageNames.WHATSAPP_PACK_NAME)){
-            return(InterceptedNotificationCode.WHATSAPP_CODE);
-        }
-        else{
-            return(InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE);
+        switch (packageName) {
+            case ApplicationPackageNames.FACEBOOK_PACK_NAME:
+            case ApplicationPackageNames.FACEBOOK_MESSENGER_PACK_NAME:
+                return (InterceptedNotificationCode.FACEBOOK_CODE);
+            case ApplicationPackageNames.INSTAGRAM_PACK_NAME:
+                return (InterceptedNotificationCode.INSTAGRAM_CODE);
+            case ApplicationPackageNames.WHATSAPP_PACK_NAME:
+                return (InterceptedNotificationCode.WHATSAPP_CODE);
+            default:
+                return (InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE);
         }
     }
 }
