@@ -17,7 +17,7 @@ This app uses firebase as a backend database and runs the desktop app in electro
  
 [link to Angular code](https://github.com/shaqer1/LinMirrorServer)
 
-## screenshots
+##  Screenshots (coming soon)
 
 
 ## Install
