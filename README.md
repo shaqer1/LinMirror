@@ -3,7 +3,7 @@
 
 ### This app mirrors notifications from your android, ios comming soon, phone to your Windows/Linux/Mac PC, running node.
 
-## Comming soon
+## Coming soon
 - page to manage profile
 - dashboard page
 - user fragment on screen
