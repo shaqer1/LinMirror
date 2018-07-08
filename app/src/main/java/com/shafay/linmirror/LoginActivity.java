@@ -5,6 +5,7 @@ import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Bundle;
 import android.provider.Settings;
+import android.support.design.widget.TextInputLayout;
 import android.support.v7.app.AppCompatActivity;
 import android.text.TextUtils;
 import android.util.Log;
@@ -23,10 +24,14 @@ public class LoginActivity extends AppCompatActivity {
 
     //private ImageChangeBroadcastReceiver imageChangeBroadcastReceiver;
     private AlertDialog enableNotificationListenerAlertDialog;
-    private Button loginButton;
-    private EditText passwordEditText;
+
+    private TextInputLayout emailLayoutText;
+    private TextInputLayout passwordLayoutText;
     private EditText emailEditText;
-    private Button signUpButton;
+    private EditText passwordEditText;
+    private Button loginButton;
+    private Button signupButton;
+
 
 
     @Override
@@ -39,29 +44,38 @@ public class LoginActivity extends AppCompatActivity {
             enableNotificationListenerAlertDialog = buildNotificationServiceAlertDialog();
             enableNotificationListenerAlertDialog.show();
         }
-        loginButton = findViewById(R.id.loginButton);
-        signUpButton = findViewById(R.id.signupButton);
-        signUpButton.setOnClickListener(view -> {
-                Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
-                if(Utils.isNotNullOrEmpty(emailEditText.getText().toString()) && Utils.isEmailFormat(emailEditText.getText().toString()))
-                    i.putExtra("email", emailEditText.getText().toString());
-                startActivity(i);
 
-                }
-        );
+        emailLayoutText = findViewById(R.id.emailLayoutText);
+        passwordLayoutText = findViewById(R.id.passwordLayoutText);
+
+        emailEditText = findViewById(R.id.emailEditText);
+        passwordEditText = findViewById(R.id.passwordEditText);
+
+        loginButton = findViewById(R.id.loginButton);
+        signupButton = findViewById(R.id.signupButton);
+
+
         loginButton.setOnClickListener((view) -> {
-            if(!Utils.isNotNullOrEmpty(passwordEditText.getText().toString()) || !Utils.isPasswordFormat(passwordEditText.getText().toString())){
-                passwordEditText.setError("Password must be at least 8 characters, one uppercase, and one lowercase.");
+            // Check email format
+            String emailInput = emailEditText.getText().toString();
+            if(Utils.isNullOrEmpty(emailInput)){
+                emailLayoutText.setError("provide an email address");
                 return;
             }
-            if(Utils.isNotNullOrEmpty(emailEditText.getText().toString()) && Utils.isEmailFormat(emailEditText.getText().toString()))
-                new PreferenceHandler(this).setEmail(emailEditText.getText().toString());
-            else {
-                emailEditText.setError("Email has incorrect format or is empty");
+            if(!Utils.isEmailFormat(emailInput)){
+                emailLayoutText.setError("provide a valid email address");
                 return;
             }
+            new PreferenceHandler(this).setEmail(emailInput);
+            // Check for a password
+            String passwordInput = passwordEditText.getText().toString();
+            if(Utils.isNullOrEmpty(passwordInput)){
+                passwordLayoutText.setError("provide a password");
+                return;
+            }
+
             Utils.showToast(LoginActivity.this, "Email and password are valid!");
-            mAuth.signInWithEmailAndPassword(emailEditText.getText().toString(), passwordEditText.getText().toString())
+            mAuth.signInWithEmailAndPassword(emailInput, passwordInput)
                     .addOnCompleteListener(this, task -> {
                         if (task.isSuccessful()) {
                             // Sign in success, update UI with the signed-in user's information
@@ -95,11 +109,22 @@ public class LoginActivity extends AppCompatActivity {
 
                     // ...
                 });*/
-        emailEditText = findViewById(R.id.emailEditText);
-        passwordEditText = findViewById(R.id.passText);
+
         if(!new PreferenceHandler(this).getEmail().equals("")){
             emailEditText.setText(new PreferenceHandler(this).getEmail());
         }
+
+        signupButton = findViewById(R.id.signupButton);
+        signupButton.setOnClickListener(view -> {
+                    Intent i = new Intent(LoginActivity.this, SignUpActivity.class);
+                    String emailFieldContent = emailEditText.getText().toString();
+
+                    if(!Utils.isNullOrEmpty(emailFieldContent) && Utils.isEmailFormat(emailFieldContent)){
+                        i.putExtra("email", emailFieldContent);
+                    }
+                    startActivity(i);
+                }
+        );
 
 /*        // Finally we register a receiver to tell the LoginActivity when a notification has been received
         imageChangeBroadcastReceiver = new ImageChangeBroadcastReceiver();
