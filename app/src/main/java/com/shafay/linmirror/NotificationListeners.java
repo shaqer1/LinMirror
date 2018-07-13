@@ -64,7 +64,7 @@ public class NotificationListeners extends NotificationListenerService {
             String tickerText = (notif.tickerText != null)?notif.tickerText.toString():"";
             Icon bmp = notif.getLargeIcon();
             Notification.Action[] act = notif.actions;
-            if(Objects.requireNonNull(title).contains("Select keyboard")){
+            if(Objects.requireNonNull(title).contains("Select keyboard") || title.contains("charging")){//todo
                 return;
             }
             //firebase
