@@ -17,7 +17,6 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Objects;
 
 import static android.content.ContentValues.TAG;
 
@@ -59,18 +58,19 @@ public class NotificationListeners extends NotificationListenerService {
         if(currentUser != null){
             Notification notif = sbn.getNotification();
             String title = notif.extras.getString("android.title");
-            String text = Objects.requireNonNull(notif.extras.getCharSequence("android.text")).toString();
+            String text = sbn.getNotification() != null && sbn.getNotification().extras != null && sbn.getNotification().extras.getCharSequence("android.text") != null ?
+                    sbn.getNotification().extras.getCharSequence("android.text").toString() : "";
             String packageName = sbn.getPackageName().substring(sbn.getPackageName().lastIndexOf(".")+1);
             String tickerText = (notif.tickerText != null)?notif.tickerText.toString():"";
             Icon bmp = notif.getLargeIcon();
             Notification.Action[] act = notif.actions;
-            if(Objects.requireNonNull(title).contains("Select keyboard") || title.contains("charging")){//todo
+            if (title != null && (title.contains("Select keyboard") || title.contains("charging"))) {//todo
                 return;
             }
             //firebase
             Map<String, Object> notification = new HashMap<>();
             notification.put("packageName", packageName.replaceAll("-"," "));
-            notification.put("title", Objects.requireNonNull(title).replaceAll("-"," "));
+            notification.put("title", title != null ? title.replaceAll("-", " ") : "");
             notification.put("tickerText", tickerText.replaceAll("-"," "));
             notification.put("text", text.replaceAll("-"," "));
             FirebaseFirestore db = FirebaseFirestore.getInstance();
