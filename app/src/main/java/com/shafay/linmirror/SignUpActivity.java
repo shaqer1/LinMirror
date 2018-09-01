@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.shafay.linmirror.NotificationListeners.mAuth;
+import static com.shafay.linmirror.NotificationListener.mAuth;
 
 public class SignUpActivity extends AppCompatActivity {
 
@@ -38,9 +38,8 @@ public class SignUpActivity extends AppCompatActivity {
 
 
         // retrieve text that was left in the email field
-        String emailFieldLeftover = this.getIntent().getExtras().getString("email");
-        if(this.getIntent().getExtras() != null && emailFieldLeftover != null){
-            emailEditText.setText(emailFieldLeftover);
+        if(this.getIntent().getExtras() != null && this.getIntent().getExtras().getString("email") != null){
+            emailEditText.setText(this.getIntent().getExtras().getString("email"));
         }
 
         signUpButton.setOnClickListener(view -> {

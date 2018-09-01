@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.shafay.linmirror.NotificationListeners.mAuth;
+import static com.shafay.linmirror.NotificationListener.mAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -39,6 +39,8 @@ public class LoginActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
+
         // If the user did not turn the notification listener service on we prompt him to do so
         if(!isNotificationServiceEnabled()){
             enableNotificationListenerAlertDialog = buildNotificationServiceAlertDialog();
@@ -53,7 +55,6 @@ public class LoginActivity extends AppCompatActivity {
 
         loginButton = findViewById(R.id.loginButton);
         signupButton = findViewById(R.id.signupButton);
-
 
         loginButton.setOnClickListener((view) -> {
             // Check email format
@@ -81,6 +82,8 @@ public class LoginActivity extends AppCompatActivity {
                             // Sign in success, update UI with the signed-in user's information
                             Log.d(TAG, "signInWithEmail:success");
                             FirebaseUser user = mAuth.getCurrentUser();
+                            Intent i = new Intent(LoginActivity.this, DashboardActivity.class);
+                            startActivity(i);
                         /*TODO
                         updateUI(user);*/
                         } else {
@@ -140,23 +143,23 @@ public class LoginActivity extends AppCompatActivity {
         unregisterReceiver(imageChangeBroadcastReceiver);*/
     }
 
-   /**
+   /*
      * Change Intercepted Notification Image
      * Changes the LoginActivity image based on which notification was intercepted
      * @param notificationCode The intercepted notification code
      *//*
     private void changeInterceptedNotificationImage(int notificationCode){
         switch(notificationCode){
-            case NotificationListeners.InterceptedNotificationCode.FACEBOOK_CODE:
+            case NotificationListener.InterceptedNotificationCode.FACEBOOK_CODE:
                 interceptedNotificationImageView.setImageResource(R.drawable.facebook_logo);
                 break;
-            case NotificationListeners.InterceptedNotificationCode.INSTAGRAM_CODE:
+            case NotificationListener.InterceptedNotificationCode.INSTAGRAM_CODE:
                 interceptedNotificationImageView.setImageResource(R.drawable.instagram_logo);
                 break;
-            case NotificationListeners.InterceptedNotificationCode.WHATSAPP_CODE:
+            case NotificationListener.InterceptedNotificationCode.WHATSAPP_CODE:
                 interceptedNotificationImageView.setImageResource(R.drawable.whatsapp_logo);
                 break;
-            case NotificationListeners.InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE:
+            case NotificationListener.InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE:
                 interceptedNotificationImageView.setImageResource(R.drawable.other_notification_logo);
                 break;
         }
@@ -185,7 +188,7 @@ public class LoginActivity extends AppCompatActivity {
         return false;
     }
 
-    /**
+    /*
      * Image Change Broadcast Receiver.
      * We use this Broadcast Receiver to notify the Main Activity when
      * a new notification has arrived, so it can properly change the

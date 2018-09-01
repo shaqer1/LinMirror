@@ -20,7 +20,7 @@ import java.util.Map;
 
 import static android.content.ContentValues.TAG;
 
-public class NotificationListeners extends NotificationListenerService {
+public class NotificationListener extends NotificationListenerService {
     public static FirebaseAuth mAuth;
 
     private static final class ApplicationPackageNames {
@@ -64,7 +64,7 @@ public class NotificationListeners extends NotificationListenerService {
             String tickerText = (notif.tickerText != null)?notif.tickerText.toString():"";
             Icon bmp = notif.getLargeIcon();
             Notification.Action[] act = notif.actions;
-            if (title != null && (title.contains("Select keyboard") || title.contains("charging"))) {//todo
+            if (title != null && (notif.visibility <= Notification.VISIBILITY_SECRET || title.contains("Select keyboard") || title.contains("charging"))) {
                 return;
             }
             //firebase
