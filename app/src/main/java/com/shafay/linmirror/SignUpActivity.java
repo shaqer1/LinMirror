@@ -11,7 +11,7 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.shafay.linmirror.NotificationListener.mAuth;
+import static com.shafay.linmirror.NotificationListeners.mAuth;
 
 public class SignUpActivity extends AppCompatActivity {
 

@@ -4,7 +4,7 @@ import android.content.Intent;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 
-import static com.shafay.linmirror.NotificationListener.mAuth;
+import static com.shafay.linmirror.NotificationListeners.mAuth;
 
 public class SplashActivity extends AppCompatActivity {
 

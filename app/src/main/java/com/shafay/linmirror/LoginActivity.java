@@ -14,7 +14,7 @@ import android.widget.EditText;
 
 import com.google.firebase.auth.FirebaseUser;
 
-import static com.shafay.linmirror.NotificationListener.mAuth;
+import static com.shafay.linmirror.NotificationListeners.mAuth;
 
 public class LoginActivity extends AppCompatActivity {
 
@@ -128,12 +128,6 @@ public class LoginActivity extends AppCompatActivity {
                     startActivity(i);
                 }
         );
-
-/*        // Finally we register a receiver to tell the LoginActivity when a notification has been received
-        imageChangeBroadcastReceiver = new ImageChangeBroadcastReceiver();
-        IntentFilter intentFilter = new IntentFilter();
-        intentFilter.addAction("com.github.chagall.notificationlistenerexample");
-        registerReceiver(imageChangeBroadcastReceiver,intentFilter);*/
     }
 
 
@@ -143,28 +137,6 @@ public class LoginActivity extends AppCompatActivity {
         unregisterReceiver(imageChangeBroadcastReceiver);*/
     }
 
-   /*
-     * Change Intercepted Notification Image
-     * Changes the LoginActivity image based on which notification was intercepted
-     * @param notificationCode The intercepted notification code
-     *//*
-    private void changeInterceptedNotificationImage(int notificationCode){
-        switch(notificationCode){
-            case NotificationListener.InterceptedNotificationCode.FACEBOOK_CODE:
-                interceptedNotificationImageView.setImageResource(R.drawable.facebook_logo);
-                break;
-            case NotificationListener.InterceptedNotificationCode.INSTAGRAM_CODE:
-                interceptedNotificationImageView.setImageResource(R.drawable.instagram_logo);
-                break;
-            case NotificationListener.InterceptedNotificationCode.WHATSAPP_CODE:
-                interceptedNotificationImageView.setImageResource(R.drawable.whatsapp_logo);
-                break;
-            case NotificationListener.InterceptedNotificationCode.OTHER_NOTIFICATIONS_CODE:
-                interceptedNotificationImageView.setImageResource(R.drawable.other_notification_logo);
-                break;
-        }
-    }
-*/
     /**
      * Is Notification Service Enabled.
      * Verifies if the notification listener service is enabled.
@@ -187,21 +159,6 @@ public class LoginActivity extends AppCompatActivity {
         }
         return false;
     }
-
-    /*
-     * Image Change Broadcast Receiver.
-     * We use this Broadcast Receiver to notify the Main Activity when
-     * a new notification has arrived, so it can properly change the
-     * notification image
-     * *//*
-    public class ImageChangeBroadcastReceiver extends BroadcastReceiver {
-        @Override
-        public void onReceive(Context context, Intent intent) {
-            int receivedNotificationCode = intent.getIntExtra("Notification Code",-1);
-            changeInterceptedNotificationImage(receivedNotificationCode);
-        }
-    }*/
-
 
     /**
      * Build Notification Listener Alert Dialog.
